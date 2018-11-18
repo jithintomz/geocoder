@@ -1,3 +1,5 @@
 openpyxl==2.5.10
 Django==1.10.2
-celery==3.1.17
+django-celery==3.2.1
+django-bulk-update==2.2.0
+requests==2.12.4

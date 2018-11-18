@@ -9,7 +9,7 @@ def index(request):
 	return response
 
 def uploads(request):
-	uploads = Upload.objects.values()
+	uploads = Upload.objects.values().order_by('-id')
 	return utils.JsonResponse({'uploads' : list(uploads)})
 
 def upload_file(request):
@@ -28,7 +28,6 @@ def download_csv(request,uploadid):
 	writer = csv.writer(response)
 	locations = Location.objects.filter(upload_id = uploadid)
 	writer.writerow(['Address','Geocode'])
-	print locations[0].address
 	for location in locations:
 		writer.writerow([location.address,location.lat_long])
 	return response
