@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Gecoder</title>
+    <!-- plugins:css -->
+    <!-- End plugin css for this page -->
+    <!-- inject:css -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.14/angular.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.14/angular-cookies.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.1.4/ui-bootstrap-tpls.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link href="{{ STATIC_URL }}css/style.css" rel="stylesheet">
+    <!-- endinject -->
+    <link rel="shortcut icon" href="images/favicon.png" />
+    <script src="{{ STATIC_URL }}js/app/app.js?v=1.7">
+    </script>
+    <script src="{{ STATIC_URL }}js/app/controller.js?v=1.7">
+    </script>
+</head>
+
+<body ng-app="geocoderApp" ng-cloak>
+    <div class="container-scroller" ng-controller="controller">
+        <!-- partial:../../partials/_navbar.html -->
+        <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
+            <div class="text-center navbar-brand-wrapper">
+                <a class="navbar-brand brand-logo" href="#/"><img src="{{ STATIC_URL }}images/logo.svg" alt="logo"></a>
+                <a class="navbar-brand brand-logo-mini" href="#/"><img src="{{ STATIC_URL }}images/logo_mini.svg" alt="logo"></a>
+            </div>
+            <div class="navbar-menu-wrapper d-flex align-items-center">
+                <ul class="navbar-nav ml-lg-auto">
+                    <li class="nav-item">
+                        <form class="mt-2 mt-md-0 d-none d-lg-block search-input">
+                            <div class="input-group">
+                                <span class="input-group-addon d-flex align-items-center"><i class="icon-magnifier icons"></i></span>
+                                <input type="text" class="form-control" ng-model="search" placeholder="Search...">
+                            </div>
+                        </form>
+                    </li>
+                    <li class="nav-item lang-dropdown d-none d-sm-block">
+                    </li>
+                    <li class="nav-item d-none d-sm-block profile-img">
+                        <a class="nav-link profile-image" href="#">
+              <img src="{{ STATIC_URL }}images/faces/face4.jpg" alt="profile-img">
+              <span class="online-status online bg-success"></span>
+            </a>
+                    </li>
+                </ul>
+                <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center ml-auto" type="button" data-toggle="offcanvas">
+                    <span class="icon-menu icons"></span>
+                </button>
+            </div>
+        </nav>
+        <!-- partial -->
+        <div class="container-fluid page-body-wrapper">
+            <div class="row row-offcanvas row-offcanvas-right">
+                <!-- partial:../../partials/_sidebar.html -->
+                <nav class="sidebar sidebar-offcanvas" id="sidebar">
+                    <ul class="nav">
+                        <li class="nav-item nav-category">
+                            <span class="nav-link">Home</span>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="javascript:void(0)" ng-click = "change_mode(2)">
+                <span class="menu-title">Upload file + </span>
+                <i class="icon-grid menu-icon"></i>
+              </a>
+                        </li>
+                    </ul>
+                </nav>
+                <!-- partial -->
+                <div class="content-wrapper">
+                    <div class="row">
+                        <div class="col-lg-12 grid-margin stretch-card" ng-hide='mode==2'>
+                            <div class="card">
+                                <div class="card-body">
+                                    <h4 class="card-title col-md-12">Uploads</h4>
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>File</th>
+                                                <th>Uploaded time</th>
+                                                <th>Size</th>
+                                                <th>Geocoding</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr ng-repeat="upload in uploads | filter:{ file_name: search } as results" class="showonhoverparent">
+                                                <td>{[{upload.file_name}]}</td>
+                                                <td>{[{upload.uploaded_time | date : 'short'}]}</td>
+                                                <td class="text-danger"> {[{upload.size/1000}]} KB<i class="mdi mdi-arrow-down"></i></td>
+                                                <td><label class="badge badge-info">{[{geocoding_label_map[upload.geocoding_status]}]}</label></td>
+                                                <td>
+                                                    <button ng-click="download_csv(upload.id)" class="btn btn-outline-primary showonhoverchild">Download</button>
+                                                </td>
+                                            </tr>
+                                            <tr ng-show="results.length==0">
+                                                <td colspan="4" class="text-center"> No files found</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12 grid-margin stretch-card" ng-hide='mode==1'>
+                            <div class="card">
+                                <div class="card-body">
+                                    <h4 class="card-title">Upload Csv</h4>
+                                    <form class="forms-sample">
+                                        <div class="form-group">
+                                            <div class="input-group col-xs-12">
+                                                <input type="file" select-ng-files ng-model="file" class="form-control file-upload-info" placeholder="Upload Image">
+                                            </div>
+                                        </div>
+                                        <button type="submit" ng-click="uploadfile(file)" class="btn btn-success mr-2">Submit</button>
+                                        <button class="btn btn-light" ng-click="change_mode(1)">Cancel</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- content-wrapper ends -->
+                <!-- partial:../../partials/_footer.html -->
+                <footer class="footer">
+                    <div class="container-fluid clearfix">
+                        <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Copyright © 2018 All rights reserved.</span>
+                    </div>
+                </footer>
+                <!-- partial -->
+            </div>
+            <!-- row-offcanvas ends -->
+        </div>
+        <!-- page-body-wrapper ends -->
+    </div>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</body>
+
+</html>
