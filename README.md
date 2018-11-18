@@ -1,4 +1,4 @@
-Gecoder: Gecode excel sheets with google geocoding api
+Geocoder: Geocode excel sheets with google geocoding api
 =========================
 
 Setup
