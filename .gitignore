@@ -3,3 +3,4 @@ syntax: glob
 *.pid
 *.db
 *.orig
+*.sqlite3
