@@ -12,6 +12,10 @@ Run migrations
 
     $  python manage.py migrate
 
+Start celery worker
+
+    $ celery worker -A geocoder
+
 Start development server
 
     $ python manage.py runserver
